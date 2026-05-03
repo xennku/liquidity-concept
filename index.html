@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<script>
+const CONFIG = {
+  author:      "Xennku",
+  lastEdited:  "May 3, 2025",
+  version:     null,
+};
+</script>
+
+<title>Liquidity Concept — Documentation</title>
+
+<style>
+  :root {
+    --bg:           #ffffff;
+    --bg-secondary: #f7f7f5;
+    --bg-tertiary:  #f0f0ec;
+    --bg-card:      #ffffff;
+    --text:         #1a1a18;
+    --text-muted:   #6b6b66;
+    --text-faint:   #9b9b96;
+    --border:       rgba(0,0,0,0.08);
+    --border-mid:   rgba(0,0,0,0.14);
+    --accent:       #1a6ef5;
+    --accent-bg:    #eaf0ff;
+    --accent-text:  #1248b3;
+    --success:      #1a7a4a;
+    --success-bg:   #eaf5ef;
+    --warning:      #a35a00;
+    --warning-bg:   #fff4e5;
+    --danger:       #a32d2d;
+    --danger-bg:    #fdf0f0;
+    --tag-bg:       #f0f0ec;
+    --tag-text:     #4a4a46;
+    --toggle-on:    #1a6ef5;
+    --toggle-off:   #ccc;
+    --nav-bg:       rgba(255,255,255,0.92);
+    --shadow:       0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    --radius:       10px;
+    --radius-sm:    6px;
+    --radius-lg:    16px;
+  }
+
+  [data-theme="dark"] {
+    --bg:           #111110;
+    --bg-secondary: #1a1a18;
+    --bg-tertiary:  #222220;
+    --bg-card:      #1a1a18;
+    --text:         #e8e8e4;
+    --text-muted:   #9b9b96;
+    --text-faint:   #6b6b66;
+    --border:       rgba(255,255,255,0.07);
+    --border-mid:   rgba(255,255,255,0.13);
+    --accent:       #4d8ef7;
+    --accent-bg:    #0d1f3c;
+    --accent-text:  #82b0fa;
+    --success:      #3db870;
+    --success-bg:   #0b1f14;
+    --warning:      #f5a832;
+    --warning-bg:   #1f1400;
+    --danger:       #e05252;
+    --danger-bg:    #200a0a;
+    --tag-bg:       #2a2a28;
+    --tag-text:     #b4b4b0;
+    --nav-bg:       rgba(17,17,16,0.92);
+    --shadow:       0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+    gap: 16px;
+  }
+
+  .nav-brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .nav-brand span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctrl-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-mid);
+    background: var(--bg-secondary);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+
+  .ctrl-btn:hover { background: var(--bg-tertiary); border-color: var(--border-mid); }
+  .ctrl-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .lang-group {
+    display: flex;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .lang-group .ctrl-btn {
+    border: none;
+    border-radius: 0;
+    border-right: 1px solid var(--border-mid);
+  }
+
+  .lang-group .ctrl-btn:last-child { border-right: none; }
+
+  /* LAYOUT */
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 88px 24px 80px;
+  }
+
+  /* SECTIONS */
+  section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  p { color: var(--text-muted); margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* HERO */
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+  }
+
+  .badge.accent { background: var(--accent-bg); border-color: transparent; color: var(--accent-text); }
+  .badge.success { background: var(--success-bg); border-color: transparent; color: var(--success); }
+
+  /* DISCLAIMER */
+  .disclaimer-box {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 48px;
+  }
+
+  .disclaimer-box .icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .disclaimer-box p {
+    color: var(--warning);
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .disclaimer-box strong { font-weight: 600; display: block; margin-bottom: 3px; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .feature-card .icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .feature-card h3 { font-size: 14px; margin-bottom: 6px; }
+  .feature-card p { font-size: 13px; color: var(--text-faint); margin: 0; }
+
+  /* PIPELINE */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 24px;
+  }
+
+  .pipeline-step {
+    flex: 1;
+    min-width: 110px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    position: relative;
+    text-align: center;
+  }
+
+  .pipeline-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .pipeline-step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .pipeline-step:not(:last-child) { border-right: none; }
+
+  .pipeline-step .step-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+
+  .pipeline-step h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .pipeline-step p {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+
+  .pipeline-step.active { background: var(--accent-bg); border-color: var(--accent); }
+  .pipeline-step.active .step-num { color: var(--accent); }
+  .pipeline-step.active h4 { color: var(--accent-text); }
+
+  /* SETTINGS TABLE */
+  .settings-group { margin-bottom: 32px; }
+
+  .settings-group-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+
+  .setting-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .setting-row:hover { border-color: var(--border-mid); }
+
+  .setting-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .setting-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .setting-type {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    white-space: nowrap;
+  }
+
+  .setting-type.bool { background: var(--accent-bg); color: var(--accent-text); }
+  .setting-type.string { background: var(--success-bg); color: var(--success); }
+  .setting-type.int, .setting-type.float { background: var(--bg-tertiary); color: var(--text-muted); }
+
+  .setting-chevron {
+    font-size: 12px;
+    color: var(--text-faint);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .setting-row.open .setting-chevron { transform: rotate(180deg); }
+
+  .setting-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .setting-row.open .setting-body { display: block; }
+
+  .setting-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .state-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .state-card {
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+
+  .state-card.on { background: var(--success-bg); border: 1px solid rgba(26,122,74,0.2); }
+  .state-card.off { background: var(--danger-bg); border: 1px solid rgba(163,45,45,0.2); }
+  .state-card.option { background: var(--accent-bg); border: 1px solid rgba(26,110,245,0.15); }
+
+  .state-card .state-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .state-card.on .state-label { color: var(--success); }
+  .state-card.off .state-label { color: var(--danger); }
+  .state-card.option .state-label { color: var(--accent); }
+
+  .state-card p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+  .options-grid {
+    display: grid;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .option-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  .option-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .option-tag.opt { background: var(--bg-tertiary); color: var(--text-muted); }
+  .option-tag.flt { background: var(--accent-bg); color: var(--accent-text); }
+  .option-tag.req { background: #fdf0f0; color: var(--danger); }
+
+  [data-theme="dark"] .option-tag.req { background: var(--danger-bg); }
+
+  .option-row p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+  /* LAYERS OVERVIEW */
+  .layer-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+
+  .layer-badge {
+    min-width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .layer-badge.erl { background: var(--accent-bg); color: var(--accent-text); }
+  .layer-badge.irl { background: var(--success-bg); color: var(--success); }
+  .layer-badge.htf { background: var(--warning-bg); color: var(--warning); }
+
+  .layer-row h3 { font-size: 14px; margin-bottom: 4px; }
+  .layer-row p { font-size: 13px; color: var(--text-faint); margin: 0; }
+
+  /* FILTER STACK */
+  .filter-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .filter-item {
+    background: var(--bg-card);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .filter-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .filter-dot.blue { background: var(--accent); }
+  .filter-dot.green { background: var(--success); }
+  .filter-dot.yellow { background: var(--warning); }
+  .filter-dot.red { background: var(--danger); }
+  .filter-dot.gray { background: var(--text-faint); }
+
+  .filter-item .label { font-size: 13px; font-weight: 500; flex: 1; }
+  .filter-item .desc { font-size: 12px; color: var(--text-faint); }
+
+  /* MODEL TABLE */
+  .model-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .model-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .model-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  .model-table tr:last-child td { border-bottom: none; }
+  .model-table .model-name { font-weight: 500; color: var(--text); white-space: nowrap; }
+  .model-table .check { color: var(--success); }
+  .model-table .cross { color: var(--danger); }
+  .model-table .partial { color: var(--warning); }
+
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 99px;
+    margin: 1px 2px 1px 0;
+  }
+
+  .pill.market { background: var(--accent-bg); color: var(--accent-text); }
+  .pill.limit { background: var(--success-bg); color: var(--success); }
+  .pill.both { background: var(--bg-tertiary); color: var(--text-muted); }
+
+  /* SL TABLE */
+  .sl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .sl-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sl-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+    font-size: 13px;
+  }
+  .sl-table tr:last-child td { border-bottom: none; }
+  .sl-table .method-name { font-weight: 500; color: var(--text); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .footer-inner { max-width: 900px; margin: 0 auto; }
+  footer p { font-size: 13px; color: var(--text-faint); margin: 0; }
+  footer .footer-warning { color: var(--warning); margin-top: 8px; font-size: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .page-wrap { padding: 80px 16px 60px; }
+    h1 { font-size: 26px; }
+    .pipeline { gap: 0; }
+    .pipeline-step { min-width: 90px; padding: 10px 8px; }
+    .state-cards { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .nav-brand span { display: none; }
+  }
+
+  /* SMOOTH transitions */
+  .setting-body { transition: none; }
+  .card, .feature-card, .setting-row, .layer-row { transition: border-color 0.15s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand" id="nav-brand">Liquidity Concept <span>by Xennku</span></div>
+  <div class="nav-controls">
+    <div class="lang-group">
+      <button class="ctrl-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="ctrl-btn" id="btn-id" onclick="setLang('id')">ID</button>
+    </div>
+    <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()">Dark</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="section-label" data-i18n="hero_label">Trading Strategy</div>
+    <h1 data-i18n="hero_title">Liquidity Concept</h1>
+    <p style="font-size:16px; color:var(--text-muted);" data-i18n="hero_subtitle">
+      A structured market analysis framework built around how institutional liquidity is built, swept, and delivered — across multiple timeframes and price structure layers.
+    </p>
+    <div class="hero-meta">
+      <span class="badge accent" data-i18n="badge_overlay">Overlay Strategy</span>
+      <span class="badge success" data-i18n="badge_tf">Multi-Timeframe</span>
+      <span class="badge" id="badge-author"></span>
+      <span class="badge" id="badge-edited"></span>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer-box">
+    <div class="icon">⚠</div>
+    <div>
+      <p><strong data-i18n="disclaimer_title">Not Financial Advice</strong>
+      <span data-i18n="disclaimer_body">This documentation is for educational and informational purposes only. Nothing here constitutes financial, investment, or trading advice. Past performance of any signal or model does not guarantee future results. Trading involves risk, and you may lose capital. Always do your own research and consult a qualified financial advisor before making any trading decisions.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <h2 data-i18n="overview_title">What is This Strategy</h2>
+    <p data-i18n="overview_p1">
+      Liquidity Concept is a complete price delivery model. It maps out how smart money builds up pools of liquidity at key swing points, triggers a sweep of that liquidity, then uses the displacement and fair value gap left behind to deliver price back in the intended direction.
+    </p>
+    <p data-i18n="overview_p2">
+      The framework is not based on indicators or oscillators. It is a structural model — it reads price through the lens of who is taking and providing liquidity at each stage of the market cycle.
+    </p>
+
+    <div style="margin: 28px 0;">
+      <div class="section-label" style="margin-bottom:12px;" data-i18n="pipeline_label">Execution Pipeline</div>
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-num">01</div>
+          <h4 data-i18n="step1">Liquidity Build</h4>
+          <p data-i18n="step1_sub">Equal highs / lows form</p>
+        </div>
+        <div class="pipeline-step active">
+          <div class="step-num">02</div>
+          <h4 data-i18n="step2">Sweep</h4>
+          <p data-i18n="step2_sub">Level is taken, then rejected</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">03</div>
+          <h4 data-i18n="step3">Displacement</h4>
+          <p data-i18n="step3_sub">FVG forms on the move</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">04</div>
+          <h4 data-i18n="step4">MSS</h4>
+          <p data-i18n="step4_sub">Structure confirms reversal</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">05</div>
+          <h4 data-i18n="step5">Entry</h4>
+          <p data-i18n="step5_sub">Price returns to FVG / zone</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYERS -->
+  <section id="layers">
+    <h2 data-i18n="layers_title">Analysis Layers</h2>
+    <p data-i18n="layers_intro">The strategy works across three distinct structural layers. Each operates independently with its own detection parameters, but they interact during confirmation and filter stages.</p>
+
+    <div class="layer-row">
+      <div class="layer-badge erl">ERL</div>
+      <div>
+        <h3 data-i18n="erl_title">External Range Liquidity</h3>
+        <p data-i18n="erl_desc">Tracks major swing highs and lows. These are the primary structural levels where institutional liquidity pools tend to form. Sweeps at ERL carry higher structural significance and typically precede larger displacement moves.</p>
+      </div>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer-badge irl">IRL</div>
+      <div>
+        <h3 data-i18n="irl_title">Internal Range Liquidity</h3>
+        <p data-i18n="irl_desc">Tracks minor intraday swing points within the broader ERL range. Useful for fine-tuning entry timing and identifying smaller delivery sequences nested inside the larger move.</p>
+      </div>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer-badge htf">HTF</div>
+      <div>
+        <h3 data-i18n="htf_title">Higher Timeframe Delivery</h3>
+        <p data-i18n="htf_desc">Tracks fair value gaps from a higher timeframe directly on the current chart. HTF zones act as a directional bias context — entries on ERL and IRL gain additional confluence when price is approaching or inside an active HTF zone.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELS -->
+  <section id="models">
+    <h2 data-i18n="models_title">Entry Models</h2>
+    <p data-i18n="models_intro">Six distinct entry models are available. Each targets a different point in the delivery sequence. Order type compatibility is fixed by the nature of each model — not all models support both order types.</p>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table class="model-table">
+        <thead>
+          <tr>
+            <th data-i18n="col_model">Model</th>
+            <th data-i18n="col_trigger">Trigger Point</th>
+            <th data-i18n="col_orders">Order Types</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name">Sweep</td>
+            <td data-i18n="model_sweep_trigger">Sweep confirmed, reversal detected</td>
+            <td><span class="pill market">Market</span><span class="pill limit">Limit</span></td>
+          </tr>
+          <tr>
+            <td class="model-name">MSS</td>
+            <td data-i18n="model_mss_trigger">Market structure shift confirmed after sweep</td>
+            <td><span class="pill market">Market</span></td>
+          </tr>
+          <tr>
+            <td class="model-name">FVG</td>
+            <td data-i18n="model_fvg_trigger">Price retraces into a valid fair value gap</td>
+            <td><span class="pill limit">Limit</span></td>
+          </tr>
+          <tr>
+            <td class="model-name">iFVG</td>
+            <td data-i18n="model_ifvg_trigger">FVG inverts and price retests the zone</td>
+            <td><span class="pill market">Market</span><span class="pill limit">Limit</span></td>
+          </tr>
+          <tr>
+            <td class="model-name">HTF FVG</td>
+            <td data-i18n="model_htffvg_trigger">Price retraces into an active HTF fair value gap</td>
+            <td><span class="pill limit">Limit</span></td>
+          </tr>
+          <tr>
+            <td class="model-name">HTF iFVG</td>
+            <td data-i18n="model_htfifvg_trigger">HTF FVG inverts and price retests</td>
+            <td><span class="pill market">Market</span><span class="pill limit">Limit</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3 style="margin-bottom:10px;" data-i18n="fill_title">Limit Order Fill Depth</h3>
+      <p style="font-size:13px; margin-bottom:10px;" data-i18n="fill_desc">When using limit orders, the fill ratio determines how deep into the zone price must reach before an entry is triggered.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+        <div style="background:var(--bg-secondary); border-radius:var(--radius-sm); padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; color:var(--text);">0.01</div>
+          <div style="font-size:11px; color:var(--text-faint); margin-top:3px;" data-i18n="fill_edge">Zone edge — aggressive</div>
+        </div>
+        <div style="background:var(--accent-bg); border-radius:var(--radius-sm); padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; color:var(--accent-text);">0.50</div>
+          <div style="font-size:11px; color:var(--accent); margin-top:3px;" data-i18n="fill_mid">Midline — standard</div>
+        </div>
+        <div style="background:var(--bg-secondary); border-radius:var(--radius-sm); padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; color:var(--text);">1.00</div>
+          <div style="font-size:11px; color:var(--text-faint); margin-top:3px;" data-i18n="fill_far">Far edge — conservative</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTER STACK -->
+  <section id="filters">
+    <h2 data-i18n="filters_title">Confluence Filter Stack</h2>
+    <p data-i18n="filters_intro">Every sweep event passes through a layered filter stack before a signal is generated. Filters can be set to optional, active, or required independently. When a required filter fails, the event is evicted entirely — no signal, no visual.</p>
+
+    <div class="filter-stack" style="margin:20px 0;">
+      <div class="filter-item">
+        <div class="filter-dot blue"></div>
+        <div class="label" data-i18n="filter_htf">HTF Zone Confluence</div>
+        <div class="desc" data-i18n="filter_htf_desc">Optional / Filter / Required</div>
+      </div>
+      <div class="filter-item">
+        <div class="filter-dot green"></div>
+        <div class="label" data-i18n="filter_session">Session Filter</div>
+        <div class="desc" data-i18n="filter_session_desc">Per session, per layer scope</div>
+      </div>
+      <div class="filter-item">
+        <div class="filter-dot yellow"></div>
+        <div class="label" data-i18n="filter_fvg">Directional FVG</div>
+        <div class="desc" data-i18n="filter_fvg_desc">Optional / Filter / Required</div>
+      </div>
+      <div class="filter-item">
+        <div class="filter-dot red"></div>
+        <div class="label" data-i18n="filter_ifvg">Confirmed iFVG</div>
+        <div class="desc" data-i18n="filter_ifvg_desc">Optional / Filter / Required</div>
+      </div>
+      <div class="filter-item">
+        <div class="filter-dot gray"></div>
+        <div class="label" data-i18n="filter_mss">MSS Confirmation</div>
+        <div class="desc" data-i18n="filter_mss_desc">Required when MSS Required is on</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;" data-i18n="filters_timing">
+      Each filter also has a timing mode. Strict timing validates the filter at sweep confirmation. Deferred timing (After Sweep) extends the validation window to MSS or event expiry — useful when price needs more room to expand into a confluence zone after the sweep.
+    </p>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings">
+    <h2 data-i18n="settings_title">Settings Reference</h2>
+    <p data-i18n="settings_intro">Click any setting to see exactly what it controls and what happens when you change it.</p>
+
+    <!-- MASTER -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_master">Master Controls</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Liquidity Concept</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_visual_desc">Master visual switch for the entire script. All data processing, signals, and alerts continue running in the background regardless of this setting — only the rendering is affected.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="visual_on">All visuals render on chart. Sweep lines, boxes, FVG zones, MSS lines, HTF zones, and session boxes are all drawn.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="visual_off">Chart is clean. No drawing objects are created. Signals and alerts still fire. Useful for live trading with alerts only.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Backtest</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_backtest_desc">Controls whether strategy orders are submitted to the TradingView broker simulator. When off, the script behaves as a pure indicator.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="backtest_on">Strategy entries, exits, stop losses, and take profits are executed in the simulator. Performance metrics appear in the Strategy Tester tab.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="backtest_off">No orders are submitted. The script runs as an indicator only. Use this when applying to a live chart without interfering with broker connection.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HTF -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_htf">HTF Delivery</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">HTF Delivery</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_htf_show_desc">Enables tracking of higher timeframe FVG and iFVG zones. These are displayed on the current chart as colored boxes and used as a directional bias filter for ERL and IRL events.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="htf_show_on">HTF zones are detected, drawn, and used as a confluence filter for liquidity events depending on Mode setting.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="htf_show_off">No HTF zones are tracked or displayed. All HTF filtering is bypassed and events are evaluated without HTF confluence.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="htf_scope_name">Scope</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_htf_scope_desc">Determines which structural layer the HTF filter applies to.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">External</span><p data-i18n="htf_scope_ext">HTF filter only evaluates ERL events. IRL events are not filtered by HTF zone presence.</p></div>
+            <div class="option-row"><span class="option-tag opt">Internal</span><p data-i18n="htf_scope_int">HTF filter only evaluates IRL events. ERL events bypass HTF confluence check entirely.</p></div>
+            <div class="option-row"><span class="option-tag flt">Both</span><p data-i18n="htf_scope_both">HTF filter applies across both ERL and IRL layers simultaneously. Most conservative — recommended.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="htf_period_name">Period</div>
+          <span class="setting-type string">Timeframe</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_htf_period_desc">The timeframe from which FVGs are fetched. Leave blank to use the auto-resolve mapping based on your current chart timeframe.</div>
+          <div class="card" style="background:var(--bg-secondary); border:none; padding:12px 16px; margin-top:4px;">
+            <div style="font-size:12px; font-weight:600; color:var(--text-faint); margin-bottom:8px;" data-i18n="auto_map">Auto mapping (chart timeframe → HTF)</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:12px; color:var(--text-muted);">
+              <div>1m – 3m → 15m</div><div>5m → 1H</div>
+              <div>15m – 30m → 4H</div><div>1H → Daily</div>
+              <div>4H – 1D → Weekly</div><div>1W+ → Monthly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Mode</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_htf_mode_desc">Controls how HTF zone confluence is evaluated for ERL and IRL events.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">Optional</span><p data-i18n="htf_mode_opt">HTF zones are displayed but not used in signal validation. All events pass regardless of HTF overlap.</p></div>
+            <div class="option-row"><span class="option-tag flt">Filter</span><p data-i18n="htf_mode_flt">Event must overlap any active HTF zone — direction of the zone does not matter. Pure presence check.</p></div>
+            <div class="option-row"><span class="option-tag req">Required</span><p data-i18n="htf_mode_req">Event must overlap an HTF zone with directional alignment. Bull sweep requires a bearish HTF zone; sell sweep requires a bullish HTF zone. Inversion zones aligned with sweep direction also qualify.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">After Sweep</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_htf_aftersweep_desc">Controls when the HTF overlap check is evaluated. Both modes reflect valid interpretations of the liquidity model — the choice trades off speed for coverage.</div>
+          <div class="state-cards">
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off — Strict</div><p data-i18n="htf_aftersweep_off">HTF check runs at sweep confirmation using only the sweep range. If no HTF zone is present at that moment, the setup is rejected immediately. Produces fewer, higher-quality signals.</p></div>
+            <div class="state-card on"><div class="state-label" data-i18n="on">On — Deferred</div><p data-i18n="htf_aftersweep_on">HTF check is deferred to MSS confirmation or event expiry. The full event range is used for the overlap check, capturing setups where price expands into an HTF zone after the sweep. More signals, slightly lower precision.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">ATR Filter</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_atr_filter_desc">Size-based quality filter for HTF zones. Only zones within the configured ATR range are tracked. Filters out micro gaps and extreme news-driven spikes.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="atr_filter_on">Only HTF zones within the min/max ATR multiplier range are accepted. Use this on volatile instruments or when you want to exclude low-quality gaps.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="atr_filter_off">All HTF zones are tracked regardless of their size. May include very small gaps or oversized news spikes.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERL -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_erl">External Range Liquidity (ERL)</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">External</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_ext_show_desc">Toggles visual rendering of ERL events on the chart. Data processing, sweep detection, FVG scanning, and signal generation all continue in the background even when this is off.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="ext_show_on">Sweep lines, grab boxes, FVG zones, iFVG inversions, and MSS lines for ERL events are drawn on chart.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="ext_show_off">Chart is clean of ERL drawings. All ERL logic runs silently. Signals and alerts still fire from ERL events.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Pool</div>
+          <span class="setting-type int">Integer</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_pool_desc">Minimum number of touches required before a level qualifies as a liquidity pool. Higher values produce fewer but structurally stronger pool sweeps.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag flt">1</span><p data-i18n="pool_1">Any single pivot qualifies immediately. Maximum signal count. Use when you want all structural sweeps regardless of pool depth.</p></div>
+            <div class="option-row"><span class="option-tag opt">2</span><p data-i18n="pool_2">Level must be tested at least twice. Filters out single-touch fakeouts. ATR tolerance determines if two pivots count as the same level.</p></div>
+            <div class="option-row"><span class="option-tag req">3+</span><p data-i18n="pool_3">Very selective. Only levels with multiple confirmed touches qualify. Fewer signals, structurally significant sweeps only.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="method_name">Detection Method</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_method_desc">Controls how pivot levels are identified for sweep targets.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">Pivot High/Low</span><p data-i18n="method_pivot">Uses confirmed pivot points with symmetric lookback. More accurate but introduces a 2× length delay before levels appear. Best for historical analysis and backtesting.</p></div>
+            <div class="option-row"><span class="option-tag flt">Highest/Lowest</span><p data-i18n="method_range">Rolling extremes over the last N bars. Responsive and near-real-time. Minor repaint risk when levels shift within the lookback window. Best for live trading.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">MSS Required</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_mssrequired_desc">Determines what happens to a sweep event when no MSS confirms within the delay window.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="mssrequired_on">If no MSS confirms within the MSS Delay window, the sweep event is completely deleted — visual and signal both removed. Chart stays clean. Only reversal setups survive.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="mssrequired_off">Sweep events persist on chart even without MSS confirmation. Shows all liquidity raids including continuation moves. Useful for studying sweep-and-go patterns.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">FVG Mode</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_fvgmode_desc">Controls how fair value gaps within the sweep window are treated — both for display and for signal validation.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">Optional</span><p data-i18n="fvgmode_opt">All FVGs in the sweep window are shown. No effect on signal validation — sweep events are not filtered based on FVG presence.</p></div>
+            <div class="option-row"><span class="option-tag flt">Filter</span><p data-i18n="fvgmode_flt">Only directional FVGs are displayed (opposite bias of sweep — bull sweep shows bearish FVG). Signal validation is unchanged.</p></div>
+            <div class="option-row"><span class="option-tag req">Required</span><p data-i18n="fvgmode_req">Only directional FVGs are shown, and the entire sweep event is evicted if no directional FVG forms before the MSS delay expires.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">iFVG Mode</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_ifvgmode_desc">Controls how inverted FVGs are handled. An iFVG forms when an existing FVG is fully closed through, inverting its directional bias.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">Optional</span><p data-i18n="ifvgmode_opt">All iFVGs are displayed. No filtering or event eviction based on iFVG presence.</p></div>
+            <div class="option-row"><span class="option-tag flt">Filter</span><p data-i18n="ifvgmode_flt">Only directional iFVGs are shown. Bull sweep shows bullish iFVG (FVG that flipped bullish). Bear sweep shows bearish iFVG.</p></div>
+            <div class="option-row"><span class="option-tag req">Required</span><p data-i18n="ifvgmode_req">The sweep event is only created if an eligible FVG candidate exists at sweep time. Event is later evicted if no iFVG confirms within the MSS delay window.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Accept Internal MSS</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_crossmss_ext_desc">Allows IRL market structure shifts to confirm ERL sweep events. An advanced setting for catching early reversals where the internal structure breaks before the external layer fully confirms.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="crossmss_ext_on">ERL sweep events can be confirmed by an IRL MSS. Earlier confirmation, more sensitive to minor structure breaks. Use with careful backtesting.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="crossmss_ext_off">ERL events require their own layer MSS for confirmation. Stricter — each layer confirms itself independently. Default and recommended.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">After Sweep (FVG)</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_fvg_aftersweep_desc">Controls the start of the FVG detection window for each sweep event.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="fvg_aftersweep_on">Detection window starts at sweep confirmation bar. Only FVGs that form after the sweep count for filter and validation.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="fvg_aftersweep_off">Detection window starts from the pivot level bar. FVGs that formed before the sweep also count — wider coverage, more FVG candidates.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IRL -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_irl">Internal Range Liquidity (IRL)</div>
+      <p style="font-size:13px; color:var(--text-faint); margin-bottom:12px;" data-i18n="irl_note">IRL settings are structurally identical to ERL settings. The key difference is that IRL uses shorter default lookback lengths to target minor intraday structure. All the same options apply — Pool, Detection Method, MSS Required, FVG Mode, iFVG Mode, After Sweep, and Accept External MSS.</p>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Accept External MSS</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_crossmss_int_desc">Allows ERL market structure shifts to confirm IRL sweep events. Useful when trading minor liquidity levels but wanting major-structure confluence as additional confirmation.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="crossmss_int_on">IRL events can be confirmed by an ERL MSS. Adds major-structure confirmation to minor-level entries. Use when you want stronger structural alignment.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="crossmss_int_off">IRL events confirm only via their own layer structure. Faster, more frequent confirmations. Default behavior.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESSION -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_session">Session Filter</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="session_filter_name">Session Filter (per session)</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_session_filter_desc">Each session (Asia, London, New York, and three custom slots) has an independent filter toggle. When enabled for a session, sweep events are only accepted when that session is active. Multiple sessions can be enabled simultaneously — if any enabled session is active, the filter passes.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="session_filter_on">Sweep events from this layer are only generated during the session window. Events that occur outside the session are rejected.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="session_filter_off">Session is displayed (if Sessions visual is on) but does not filter signals. Events can form at any time.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">After Sweep (Session)</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_session_aftersweep_desc">Timing mode for session filter validation. Mirrors the behavior of the HTF After Sweep option but applied to session boundaries.</div>
+          <div class="state-cards">
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off — Strict</div><p data-i18n="session_aftersweep_off">Session must be active at the exact bar when the sweep confirms. Rejects setups that happen near session open or close boundaries.</p></div>
+            <div class="state-card on"><div class="state-label" data-i18n="on">On — Deferred</div><p data-i18n="session_aftersweep_on">Session check defers to MSS confirmation or event expiry. Captures setups where the sweep occurs near a session boundary but the MSS forms well within the session.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNALS -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_signal">Entry Model</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Trading</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_trading_desc">Master switch for signal generation. Disabling this suppresses all entry labels, limit tracking, and strategy orders.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="trading_on">Entry signals are generated based on the selected model. Long/Short labels appear on chart. Strategy orders are submitted if Backtest is also on.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="trading_off">No signals of any kind are generated. Use when you want the structural analysis visuals without any entry tracking.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="signal_scope_name">Signal Scope</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_signal_scope_desc">Which structural layer generates entry signals. HTF FVG and HTF iFVG models bypass this scope — they always operate from the HTF layer regardless of this setting.</div>
+          <div class="options-grid">
+            <div class="option-row"><span class="option-tag opt">External</span><p data-i18n="scope_ext">Only ERL events generate signals. Best when focusing on major structural sweeps.</p></div>
+            <div class="option-row"><span class="option-tag opt">Internal</span><p data-i18n="scope_int">Only IRL events generate signals. Best for intraday setups with frequent signal generation.</p></div>
+            <div class="option-row"><span class="option-tag flt">Both</span><p data-i18n="scope_both">Both ERL and IRL events generate signals. Maximum signal coverage across all structural layers.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Limit i/FVG</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_fvglimit_desc">Caps the number of limit entries triggered per sweep event from FVG and iFVG zones. Does not affect Sweep, MSS, HTF FVG, or HTF iFVG models.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="fvglimit_on">Only N zones per event are activated for limit orders, controlled by the Max value. Combined with the Oldest toggle to determine which zones are prioritized.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="fvglimit_off">All eligible FVG and iFVG zones within the sweep window are activated for limit entries. More entries per event, higher position exposure.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Oldest</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_oldest_desc">Priority order when multiple eligible zones exist and Limit i/FVG is on.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="oldest_on">N oldest zones are activated first. These are the zones farthest from the MSS — further into the premium or discount. More room for price to reach.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="oldest_off">N newest zones are activated first. These are closest to the MSS — tightest retrace entries. Higher fill probability but narrower zone.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Historical</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_historical_desc">Controls whether entry labels and data are retained after the originating sweep event ages out of the tracking limit.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="historical_on">Old entries stay visible on chart even after their sweep event is evicted. Useful for backtesting review and building performance statistics.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="historical_off">Entry labels are removed when the originating event ages out. Cleaner chart during live trading — only recent signals visible.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RISK -->
+    <div class="settings-group">
+      <div class="settings-group-title" data-i18n="group_risk">Risk Management</div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name" data-i18n="sl_method_name">SL Method</div>
+          <span class="setting-type string">Select</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_sl_method_desc">Determines how the stop loss price is calculated for each entry. ATR buffer can be added on top of all structural methods.</div>
+          <div class="card" style="background:var(--bg-secondary); border:none; padding:0; overflow:hidden; border-radius:var(--radius-sm); margin-top:8px;">
+            <table class="sl-table">
+              <thead><tr><th data-i18n="sl_col_method">Method</th><th data-i18n="sl_col_ref">Reference Point</th><th data-i18n="sl_col_note">Tradeoff</th></tr></thead>
+              <tbody>
+                <tr><td class="method-name" data-i18n="sl_pct">Percentage</td><td data-i18n="sl_pct_ref">Fixed % from entry</td><td data-i18n="sl_pct_note">Ignores structure. Consistent distance.</td></tr>
+                <tr><td class="method-name">Auto</td><td data-i18n="sl_auto_ref">Structure-aware, model-dependent</td><td data-i18n="sl_auto_note">Adapts to signal type. Widest coverage.</td></tr>
+                <tr><td class="method-name" data-i18n="sl_level">Sweep Level</td><td data-i18n="sl_level_ref">Beyond the swept liquidity level</td><td data-i18n="sl_level_note">Tightest. Higher stop-out risk on noise.</td></tr>
+                <tr><td class="method-name" data-i18n="sl_peak">Sweep Peak/Trough</td><td data-i18n="sl_peak_ref">Beyond the sweep wick extreme</td><td data-i18n="sl_peak_note">Standard. Safest structural option.</td></tr>
+                <tr><td class="method-name" data-i18n="sl_range">Event Range Extreme</td><td data-i18n="sl_range_ref">Beyond full event range</td><td data-i18n="sl_range_note">Widest. Significantly lower R:R per trade.</td></tr>
+                <tr><td class="method-name" data-i18n="sl_zone">Zone</td><td data-i18n="sl_zone_ref">Beyond FVG / iFVG / HTF zone boundary</td><td data-i18n="sl_zone_note">Zone-aligned. Falls back to Auto if no zone.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">ATR Buffer</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_atrbuffer_desc">Adds an ATR-based safety margin beyond the structural SL reference point. No effect on the Percentage method.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="atrbuffer_on">Stop loss is placed at: structural reference + (ATR × multiplier). Adds breathing room on volatile instruments where wicks routinely overshoot structure before reversing.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="atrbuffer_off">Stop loss sits exactly at the structural reference. Tighter stop, higher R:R, but more vulnerable to wick-induced stop hunts on noisy pairs.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row" onclick="toggleRow(this)">
+        <div class="setting-header">
+          <div class="setting-name">Compound</div>
+          <span class="setting-type bool">Toggle</span>
+          <span class="setting-chevron">▼</span>
+        </div>
+        <div class="setting-body">
+          <div class="setting-desc" data-i18n="setting_compound_desc">Determines the capital base used to calculate position size per trade.</div>
+          <div class="state-cards">
+            <div class="state-card on"><div class="state-label" data-i18n="on">On</div><p data-i18n="compound_on">Risk is calculated as a percentage of current equity. Position size grows with account — compounding gains and losses. Aggressive growth curve.</p></div>
+            <div class="state-card off"><div class="state-label" data-i18n="off">Off</div><p data-i18n="compound_off">Risk is calculated as a percentage of initial capital. Position size stays fixed regardless of current equity. Stable, predictable risk per trade.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <h2 data-i18n="glossary_title">Glossary</h2>
+    <div class="card-grid">
+      <div class="feature-card">
+        <div class="icon-wrap">L</div>
+        <h3>Liquidity Pool</h3>
+        <p data-i18n="gloss_liq">A cluster of pending orders sitting at or near a key price level — typically formed by equal highs or lows, stop losses from retail traders, or untested swing points.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">S</div>
+        <h3>Sweep</h3>
+        <p data-i18n="gloss_sweep">A move that briefly breaks a key level, triggers the orders sitting there, then reverses. The reversal is what confirms a true sweep versus a genuine breakout.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">F</div>
+        <h3>FVG</h3>
+        <p data-i18n="gloss_fvg">Fair Value Gap. A three-candle imbalance where the middle candle moves so strongly that it leaves a gap between the high of the first and the low of the third. Price tends to return to fill this gap.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">i</div>
+        <h3>iFVG</h3>
+        <p data-i18n="gloss_ifvg">Inverse FVG. A fair value gap that has been fully closed through. Once a bullish FVG is completely traded through to the downside, it becomes a bearish iFVG — same price range, opposite delivery direction.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">M</div>
+        <h3>MSS</h3>
+        <p data-i18n="gloss_mss">Market Structure Shift. A confirmed break of a prior swing point in the opposite direction to the sweep. Required to confirm that a reversal is underway and the sweep was genuine.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">CE</div>
+        <h3 data-i18n="gloss_ce_title">Consequent Encroachment</h3>
+        <p data-i18n="gloss_ce">The 50% midpoint of any FVG or iFVG zone. The standard reference for limit order placement — price reaching the midpoint is considered sufficient retrace into the zone for a high-probability entry.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p id="footer-main"></p>
+    <p class="footer-warning" data-i18n="footer_warning">This is not financial advice. All analysis is for educational purposes only. Trade at your own risk.</p>
+  </div>
+</footer>
+
+<script>
+const i18n = {
+  en: {
+    hero_label: "Trading Strategy",
+    hero_title: "Liquidity Concept",
+    hero_subtitle: "A structured market analysis framework built around how institutional liquidity is built, swept, and delivered — across multiple timeframes and price structure layers.",
+    badge_overlay: "Overlay Strategy",
+    badge_tf: "Multi-Timeframe",
+    disclaimer_title: "Not Financial Advice",
+    disclaimer_body: "This documentation is for educational and informational purposes only. Nothing here constitutes financial, investment, or trading advice. Past performance of any signal or model does not guarantee future results. Trading involves risk, and you may lose capital. Always do your own research and consult a qualified financial advisor before making any trading decisions.",
+    overview_title: "What is This Strategy",
+    overview_p1: "Liquidity Concept is a complete price delivery model. It maps out how smart money builds up pools of liquidity at key swing points, triggers a sweep of that liquidity, then uses the displacement and fair value gap left behind to deliver price back in the intended direction.",
+    overview_p2: "The framework is not based on indicators or oscillators. It is a structural model — it reads price through the lens of who is taking and providing liquidity at each stage of the market cycle.",
+    pipeline_label: "Execution Pipeline",
+    step1: "Liquidity Build", step1_sub: "Equal highs / lows form",
+    step2: "Sweep", step2_sub: "Level is taken, then rejected",
+    step3: "Displacement", step3_sub: "FVG forms on the move",
+    step4: "MSS", step4_sub: "Structure confirms reversal",
+    step5: "Entry", step5_sub: "Price returns to FVG / zone",
+    layers_title: "Analysis Layers",
+    layers_intro: "The strategy works across three distinct structural layers. Each operates independently with its own detection parameters, but they interact during confirmation and filter stages.",
+    erl_title: "External Range Liquidity", erl_desc: "Tracks major swing highs and lows. These are the primary structural levels where institutional liquidity pools tend to form. Sweeps at ERL carry higher structural significance and typically precede larger displacement moves.",
+    irl_title: "Internal Range Liquidity", irl_desc: "Tracks minor intraday swing points within the broader ERL range. Useful for fine-tuning entry timing and identifying smaller delivery sequences nested inside the larger move.",
+    htf_title: "Higher Timeframe Delivery", htf_desc: "Tracks fair value gaps from a higher timeframe directly on the current chart. HTF zones act as a directional bias context — entries on ERL and IRL gain additional confluence when price is approaching or inside an active HTF zone.",
+    models_title: "Entry Models",
+    models_intro: "Six distinct entry models are available. Each targets a different point in the delivery sequence. Order type compatibility is fixed by the nature of each model — not all models support both order types.",
+    col_model: "Model", col_trigger: "Trigger Point", col_orders: "Order Types",
+    model_sweep_trigger: "Sweep confirmed, reversal detected",
+    model_mss_trigger: "Market structure shift confirmed after sweep",
+    model_fvg_trigger: "Price retraces into a valid fair value gap",
+    model_ifvg_trigger: "FVG inverts and price retests the zone",
+    model_htffvg_trigger: "Price retraces into an active HTF fair value gap",
+    model_htfifvg_trigger: "HTF FVG inverts and price retests",
+    fill_title: "Limit Order Fill Depth",
+    fill_desc: "When using limit orders, the fill ratio determines how deep into the zone price must reach before an entry is triggered.",
+    fill_edge: "Zone edge — aggressive",
+    fill_mid: "Midline — standard",
+    fill_far: "Far edge — conservative",
+    filters_title: "Confluence Filter Stack",
+    filters_intro: "Every sweep event passes through a layered filter stack before a signal is generated. Filters can be set to optional, active, or required independently. When a required filter fails, the event is evicted entirely — no signal, no visual.",
+    filter_htf: "HTF Zone Confluence", filter_htf_desc: "Optional / Filter / Required",
+    filter_session: "Session Filter", filter_session_desc: "Per session, per layer scope",
+    filter_fvg: "Directional FVG", filter_fvg_desc: "Optional / Filter / Required",
+    filter_ifvg: "Confirmed iFVG", filter_ifvg_desc: "Optional / Filter / Required",
+    filter_mss: "MSS Confirmation", filter_mss_desc: "Required when MSS Required is on",
+    filters_timing: "Each filter also has a timing mode. Strict timing validates the filter at sweep confirmation. Deferred timing (After Sweep) extends the validation window to MSS or event expiry — useful when price needs more room to expand into a confluence zone after the sweep.",
+    settings_title: "Settings Reference",
+    settings_intro: "Click any setting to see exactly what it controls and what happens when you change it.",
+    group_master: "Master Controls", group_htf: "HTF Delivery", group_erl: "External Range Liquidity (ERL)", group_irl: "Internal Range Liquidity (IRL)", group_session: "Session Filter", group_signal: "Entry Model", group_risk: "Risk Management",
+    on: "On", off: "Off",
+    setting_visual_desc: "Master visual switch for the entire script. All data processing, signals, and alerts continue running in the background regardless of this setting — only the rendering is affected.",
+    visual_on: "All visuals render on chart. Sweep lines, boxes, FVG zones, MSS lines, HTF zones, and session boxes are all drawn.",
+    visual_off: "Chart is clean. No drawing objects are created. Signals and alerts still fire. Useful for live trading with alerts only.",
+    setting_backtest_desc: "Controls whether strategy orders are submitted to the TradingView broker simulator. When off, the script behaves as a pure indicator.",
+    backtest_on: "Strategy entries, exits, stop losses, and take profits are executed in the simulator. Performance metrics appear in the Strategy Tester tab.",
+    backtest_off: "No orders are submitted. The script runs as an indicator only. Use this when applying to a live chart without interfering with broker connection.",
+    setting_htf_show_desc: "Enables tracking of higher timeframe FVG and iFVG zones. These are displayed on the current chart as colored boxes and used as a directional bias filter for ERL and IRL events.",
+    htf_show_on: "HTF zones are detected, drawn, and used as a confluence filter for liquidity events depending on Mode setting.",
+    htf_show_off: "No HTF zones are tracked or displayed. All HTF filtering is bypassed and events are evaluated without HTF confluence.",
+    htf_scope_name: "Scope",
+    setting_htf_scope_desc: "Determines which structural layer the HTF filter applies to.",
+    htf_scope_ext: "HTF filter only evaluates ERL events. IRL events are not filtered by HTF zone presence.",
+    htf_scope_int: "HTF filter only evaluates IRL events. ERL events bypass HTF confluence check entirely.",
+    htf_scope_both: "HTF filter applies across both ERL and IRL layers simultaneously. Most conservative — recommended.",
+    htf_period_name: "Period",
+    setting_htf_period_desc: "The timeframe from which FVGs are fetched. Leave blank to use the auto-resolve mapping based on your current chart timeframe.",
+    auto_map: "Auto mapping (chart timeframe to HTF)",
+    setting_htf_mode_desc: "Controls how HTF zone confluence is evaluated for ERL and IRL events.",
+    htf_mode_opt: "HTF zones are displayed but not used in signal validation. All events pass regardless of HTF overlap.",
+    htf_mode_flt: "Event must overlap any active HTF zone — direction of the zone does not matter. Pure presence check.",
+    htf_mode_req: "Event must overlap an HTF zone with directional alignment. Bull sweep requires a bearish HTF zone; sell sweep requires a bullish HTF zone. Inversion zones aligned with sweep direction also qualify.",
+    setting_htf_aftersweep_desc: "Controls when the HTF overlap check is evaluated. Both modes reflect valid interpretations of the liquidity model — the choice trades off speed for coverage.",
+    htf_aftersweep_off: "HTF check runs at sweep confirmation using only the sweep range. If no HTF zone is present at that moment, the setup is rejected immediately. Produces fewer, higher-quality signals.",
+    htf_aftersweep_on: "HTF check is deferred to MSS confirmation or event expiry. The full event range is used for the overlap check, capturing setups where price expands into an HTF zone after the sweep. More signals, slightly lower precision.",
+    setting_atr_filter_desc: "Size-based quality filter for HTF zones. Only zones within the configured ATR range are tracked. Filters out micro gaps and extreme news-driven spikes.",
+    atr_filter_on: "Only HTF zones within the min/max ATR multiplier range are accepted. Use this on volatile instruments or when you want to exclude low-quality gaps.",
+    atr_filter_off: "All HTF zones are tracked regardless of their size. May include very small gaps or oversized news spikes.",
+    setting_ext_show_desc: "Toggles visual rendering of ERL events on the chart. Data processing, sweep detection, FVG scanning, and signal generation all continue in the background even when this is off.",
+    ext_show_on: "Sweep lines, grab boxes, FVG zones, iFVG inversions, and MSS lines for ERL events are drawn on chart.",
+    ext_show_off: "Chart is clean of ERL drawings. All ERL logic runs silently. Signals and alerts still fire from ERL events.",
+    setting_pool_desc: "Minimum number of touches required before a level qualifies as a liquidity pool. Higher values produce fewer but structurally stronger pool sweeps.",
+    pool_1: "Any single pivot qualifies immediately. Maximum signal count. Use when you want all structural sweeps regardless of pool depth.",
+    pool_2: "Level must be tested at least twice. Filters out single-touch fakeouts. ATR tolerance determines if two pivots count as the same level.",
+    pool_3: "Very selective. Only levels with multiple confirmed touches qualify. Fewer signals, structurally significant sweeps only.",
+    method_name: "Detection Method",
+    setting_method_desc: "Controls how pivot levels are identified for sweep targets.",
+    method_pivot: "Uses confirmed pivot points with symmetric lookback. More accurate but introduces a 2x length delay before levels appear. Best for historical analysis and backtesting.",
+    method_range: "Rolling extremes over the last N bars. Responsive and near-real-time. Minor repaint risk when levels shift within the lookback window. Best for live trading.",
+    setting_mssrequired_desc: "Determines what happens to a sweep event when no MSS confirms within the delay window.",
+    mssrequired_on: "If no MSS confirms within the MSS Delay window, the sweep event is completely deleted — visual and signal both removed. Chart stays clean. Only reversal setups survive.",
+    mssrequired_off: "Sweep events persist on chart even without MSS confirmation. Shows all liquidity raids including continuation moves. Useful for studying sweep-and-go patterns.",
+    setting_fvgmode_desc: "Controls how fair value gaps within the sweep window are treated — both for display and for signal validation.",
+    fvgmode_opt: "All FVGs in the sweep window are shown. No effect on signal validation — sweep events are not filtered based on FVG presence.",
+    fvgmode_flt: "Only directional FVGs are displayed (opposite bias of sweep — bull sweep shows bearish FVG). Signal validation is unchanged.",
+    fvgmode_req: "Only directional FVGs are shown, and the entire sweep event is evicted if no directional FVG forms before the MSS delay expires.",
+    setting_ifvgmode_desc: "Controls how inverted FVGs are handled. An iFVG forms when an existing FVG is fully closed through, inverting its directional bias.",
+    ifvgmode_opt: "All iFVGs are displayed. No filtering or event eviction based on iFVG presence.",
+    ifvgmode_flt: "Only directional iFVGs are shown. Bull sweep shows bullish iFVG (FVG that flipped bullish). Bear sweep shows bearish iFVG.",
+    ifvgmode_req: "The sweep event is only created if an eligible FVG candidate exists at sweep time. Event is later evicted if no iFVG confirms within the MSS delay window.",
+    setting_crossmss_ext_desc: "Allows IRL market structure shifts to confirm ERL sweep events. An advanced setting for catching early reversals where the internal structure breaks before the external layer fully confirms.",
+    crossmss_ext_on: "ERL sweep events can be confirmed by an IRL MSS. Earlier confirmation, more sensitive to minor structure breaks. Use with careful backtesting.",
+    crossmss_ext_off: "ERL events require their own layer MSS for confirmation. Stricter — each layer confirms itself independently. Default and recommended.",
+    setting_fvg_aftersweep_desc: "Controls the start of the FVG detection window for each sweep event.",
+    fvg_aftersweep_on: "Detection window starts at sweep confirmation bar. Only FVGs that form after the sweep count for filter and validation.",
+    fvg_aftersweep_off: "Detection window starts from the pivot level bar. FVGs that formed before the sweep also count — wider coverage, more FVG candidates.",
+    irl_note: "IRL settings are structurally identical to ERL settings. The key difference is that IRL uses shorter default lookback lengths to target minor intraday structure. All the same options apply — Pool, Detection Method, MSS Required, FVG Mode, iFVG Mode, After Sweep, and Accept External MSS.",
+    setting_crossmss_int_desc: "Allows ERL market structure shifts to confirm IRL sweep events. Useful when trading minor liquidity levels but wanting major-structure confluence as additional confirmation.",
+    crossmss_int_on: "IRL events can be confirmed by an ERL MSS. Adds major-structure confirmation to minor-level entries. Use when you want stronger structural alignment.",
+    crossmss_int_off: "IRL events confirm only via their own layer structure. Faster, more frequent confirmations. Default behavior.",
+    session_filter_name: "Session Filter (per session)",
+    setting_session_filter_desc: "Each session (Asia, London, New York, and three custom slots) has an independent filter toggle. When enabled for a session, sweep events are only accepted when that session is active. Multiple sessions can be enabled simultaneously — if any enabled session is active, the filter passes.",
+    session_filter_on: "Sweep events from this layer are only generated during the session window. Events that occur outside the session are rejected.",
+    session_filter_off: "Session is displayed (if Sessions visual is on) but does not filter signals. Events can form at any time.",
+    setting_session_aftersweep_desc: "Timing mode for session filter validation. Mirrors the behavior of the HTF After Sweep option but applied to session boundaries.",
+    session_aftersweep_off: "Session must be active at the exact bar when the sweep confirms. Rejects setups that happen near session open or close boundaries.",
+    session_aftersweep_on: "Session check defers to MSS confirmation or event expiry. Captures setups where the sweep occurs near a session boundary but the MSS forms well within the session.",
+    setting_trading_desc: "Master switch for signal generation. Disabling this suppresses all entry labels, limit tracking, and strategy orders.",
+    trading_on: "Entry signals are generated based on the selected model. Long/Short labels appear on chart. Strategy orders are submitted if Backtest is also on.",
+    trading_off: "No signals of any kind are generated. Use when you want the structural analysis visuals without any entry tracking.",
+    signal_scope_name: "Signal Scope",
+    setting_signal_scope_desc: "Which structural layer generates entry signals. HTF FVG and HTF iFVG models bypass this scope — they always operate from the HTF layer regardless of this setting.",
+    scope_ext: "Only ERL events generate signals. Best when focusing on major structural sweeps.",
+    scope_int: "Only IRL events generate signals. Best for intraday setups with frequent signal generation.",
+    scope_both: "Both ERL and IRL events generate signals. Maximum signal coverage across all structural layers.",
+    setting_fvglimit_desc: "Caps the number of limit entries triggered per sweep event from FVG and iFVG zones. Does not affect Sweep, MSS, HTF FVG, or HTF iFVG models.",
+    fvglimit_on: "Only N zones per event are activated for limit orders, controlled by the Max value. Combined with the Oldest toggle to determine which zones are prioritized.",
+    fvglimit_off: "All eligible FVG and iFVG zones within the sweep window are activated for limit entries. More entries per event, higher position exposure.",
+    setting_oldest_desc: "Priority order when multiple eligible zones exist and Limit i/FVG is on.",
+    oldest_on: "N oldest zones are activated first. These are the zones farthest from the MSS — further into the premium or discount. More room for price to reach.",
+    oldest_off: "N newest zones are activated first. These are closest to the MSS — tightest retrace entries. Higher fill probability but narrower zone.",
+    setting_historical_desc: "Controls whether entry labels and data are retained after the originating sweep event ages out of the tracking limit.",
+    historical_on: "Old entries stay visible on chart even after their sweep event is evicted. Useful for backtesting review and building performance statistics.",
+    historical_off: "Entry labels are removed when the originating event ages out. Cleaner chart during live trading — only recent signals visible.",
+    sl_method_name: "SL Method",
+    setting_sl_method_desc: "Determines how the stop loss price is calculated for each entry. ATR buffer can be added on top of all structural methods.",
+    sl_col_method: "Method", sl_col_ref: "Reference Point", sl_col_note: "Tradeoff",
+    sl_pct: "Percentage", sl_pct_ref: "Fixed % from entry", sl_pct_note: "Ignores structure. Consistent distance.",
+    sl_auto_ref: "Structure-aware, model-dependent", sl_auto_note: "Adapts to signal type. Widest coverage.",
+    sl_level: "Sweep Level", sl_level_ref: "Beyond the swept liquidity level", sl_level_note: "Tightest. Higher stop-out risk on noise.",
+    sl_peak: "Sweep Peak/Trough", sl_peak_ref: "Beyond the sweep wick extreme", sl_peak_note: "Standard. Safest structural option.",
+    sl_range: "Event Range Extreme", sl_range_ref: "Beyond full event range", sl_range_note: "Widest. Significantly lower R:R per trade.",
+    sl_zone: "Zone", sl_zone_ref: "Beyond FVG / iFVG / HTF zone boundary", sl_zone_note: "Zone-aligned. Falls back to Auto if no zone.",
+    setting_atrbuffer_desc: "Adds an ATR-based safety margin beyond the structural SL reference point. No effect on the Percentage method.",
+    atrbuffer_on: "Stop loss is placed at: structural reference + (ATR x multiplier). Adds breathing room on volatile instruments where wicks routinely overshoot structure before reversing.",
+    atrbuffer_off: "Stop loss sits exactly at the structural reference. Tighter stop, higher R:R, but more vulnerable to wick-induced stop hunts on noisy pairs.",
+    setting_compound_desc: "Determines the capital base used to calculate position size per trade.",
+    compound_on: "Risk is calculated as a percentage of current equity. Position size grows with account — compounding gains and losses. Aggressive growth curve.",
+    compound_off: "Risk is calculated as a percentage of initial capital. Position size stays fixed regardless of current equity. Stable, predictable risk per trade.",
+    glossary_title: "Glossary",
+    gloss_liq: "A cluster of pending orders sitting at or near a key price level — typically formed by equal highs or lows, stop losses from retail traders, or untested swing points.",
+    gloss_sweep: "A move that briefly breaks a key level, triggers the orders sitting there, then reverses. The reversal is what confirms a true sweep versus a genuine breakout.",
+    gloss_fvg: "Fair Value Gap. A three-candle imbalance where the middle candle moves so strongly that it leaves a gap between the high of the first and the low of the third. Price tends to return to fill this gap.",
+    gloss_ifvg: "Inverse FVG. A fair value gap that has been fully closed through. Once a bullish FVG is completely traded through to the downside, it becomes a bearish iFVG — same price range, opposite delivery direction.",
+    gloss_mss: "Market Structure Shift. A confirmed break of a prior swing point in the opposite direction to the sweep. Required to confirm that a reversal is underway and the sweep was genuine.",
+    gloss_ce_title: "Consequent Encroachment",
+    gloss_ce: "The 50% midpoint of any FVG or iFVG zone. The standard reference for limit order placement — price reaching the midpoint is considered sufficient retrace into the zone for a high-probability entry.",
+    footer_warning: "This is not financial advice. All analysis is for educational purposes only. Trade at your own risk.",
+  },
+  id: {
+    hero_label: "Strategi Trading",
+    hero_title: "Liquidity Concept",
+    hero_subtitle: "Kerangka analisis pasar yang terstruktur, dibangun di atas cara likuiditas institusional terbentuk, disapu, dan dikirimkan — lintas berbagai timeframe dan lapisan struktur harga.",
+    badge_overlay: "Overlay Strategy",
+    badge_tf: "Multi-Timeframe",
+    disclaimer_title: "Bukan Saran Keuangan",
+    disclaimer_body: "Dokumentasi ini hanya untuk tujuan edukasi dan informasi. Tidak ada yang di sini merupakan saran keuangan, investasi, atau trading. Performa sinyal atau model di masa lalu tidak menjamin hasil di masa depan. Trading mengandung risiko dan kamu bisa kehilangan modal. Selalu lakukan riset sendiri dan konsultasikan dengan penasihat keuangan sebelum mengambil keputusan trading.",
+    overview_title: "Apa Itu Strategi Ini",
+    overview_p1: "Liquidity Concept adalah model pengiriman harga yang lengkap. Ia memetakan bagaimana smart money membangun kumpulan likuiditas di titik swing utama, memicu penyapuan (sweep) atas likuiditas tersebut, lalu menggunakan displacement dan fair value gap yang terbentuk untuk mengantarkan harga kembali ke arah yang diinginkan.",
+    overview_p2: "Kerangka kerja ini tidak berbasis indikator atau osilator. Ini adalah model struktural — ia membaca harga melalui lensa siapa yang mengambil dan menyediakan likuiditas di setiap tahap siklus pasar.",
+    pipeline_label: "Alur Eksekusi",
+    step1: "Pembentukan Likuiditas", step1_sub: "Equal highs / lows terbentuk",
+    step2: "Sweep", step2_sub: "Level diambil, lalu ditolak",
+    step3: "Displacement", step3_sub: "FVG terbentuk saat pergerakan",
+    step4: "MSS", step4_sub: "Struktur konfirmasi pembalikan",
+    step5: "Entry", step5_sub: "Harga kembali ke FVG / zona",
+    layers_title: "Lapisan Analisis",
+    layers_intro: "Strategi ini bekerja di tiga lapisan struktural yang berbeda. Masing-masing beroperasi secara independen dengan parameter deteksinya sendiri, namun berinteraksi saat tahap konfirmasi dan filter.",
+    erl_title: "External Range Liquidity", erl_desc: "Melacak swing high dan low utama. Ini adalah level struktural primer di mana kumpulan likuiditas institusional cenderung terbentuk. Sweep di ERL membawa signifikansi struktural lebih tinggi dan biasanya mendahului pergerakan displacement yang lebih besar.",
+    irl_title: "Internal Range Liquidity", irl_desc: "Melacak swing point intraday minor dalam rentang ERL yang lebih luas. Berguna untuk memperhalus timing entry dan mengidentifikasi urutan pengiriman yang lebih kecil yang bersarang di dalam pergerakan yang lebih besar.",
+    htf_title: "Higher Timeframe Delivery", htf_desc: "Melacak fair value gap dari timeframe yang lebih tinggi langsung di grafik saat ini. Zona HTF bertindak sebagai konteks bias arah — entry di ERL dan IRL mendapat confluence tambahan ketika harga mendekati atau berada di dalam zona HTF aktif.",
+    models_title: "Model Entry",
+    models_intro: "Tersedia enam model entry yang berbeda. Setiap model menargetkan titik yang berbeda dalam urutan pengiriman. Kompatibilitas jenis order bersifat tetap berdasarkan sifat masing-masing model — tidak semua model mendukung kedua jenis order.",
+    col_model: "Model", col_trigger: "Titik Pemicu", col_orders: "Jenis Order",
+    model_sweep_trigger: "Sweep terkonfirmasi, pembalikan terdeteksi",
+    model_mss_trigger: "Market structure shift terkonfirmasi setelah sweep",
+    model_fvg_trigger: "Harga retrace ke dalam fair value gap yang valid",
+    model_ifvg_trigger: "FVG berbalik dan harga menguji ulang zona",
+    model_htffvg_trigger: "Harga retrace ke dalam fair value gap HTF aktif",
+    model_htfifvg_trigger: "HTF FVG berbalik dan harga menguji ulang",
+    fill_title: "Kedalaman Isi Limit Order",
+    fill_desc: "Saat menggunakan limit order, fill ratio menentukan seberapa dalam harga harus masuk ke zona sebelum entry dipicu.",
+    fill_edge: "Tepi zona — agresif",
+    fill_mid: "Garis tengah — standar",
+    fill_far: "Tepi jauh — konservatif",
+    filters_title: "Tumpukan Filter Confluence",
+    filters_intro: "Setiap sweep event melewati tumpukan filter berlapis sebelum sinyal dibuat. Filter dapat diatur ke opsional, aktif, atau wajib secara independen. Ketika filter wajib gagal, event dikeluarkan sepenuhnya — tidak ada sinyal, tidak ada visual.",
+    filter_htf: "Confluence Zona HTF", filter_htf_desc: "Optional / Filter / Required",
+    filter_session: "Filter Sesi", filter_session_desc: "Per sesi, per cakupan lapisan",
+    filter_fvg: "FVG Directional", filter_fvg_desc: "Optional / Filter / Required",
+    filter_ifvg: "iFVG Terkonfirmasi", filter_ifvg_desc: "Optional / Filter / Required",
+    filter_mss: "Konfirmasi MSS", filter_mss_desc: "Wajib ketika MSS Required aktif",
+    filters_timing: "Setiap filter juga memiliki mode timing. Timing ketat memvalidasi filter saat konfirmasi sweep. Timing ditangguhkan (After Sweep) memperluas jendela validasi hingga MSS atau kadaluarsa event — berguna ketika harga butuh ruang lebih untuk berkembang ke zona confluence setelah sweep.",
+    settings_title: "Referensi Pengaturan",
+    settings_intro: "Klik pengaturan mana saja untuk melihat tepatnya apa yang dikontrol dan apa yang terjadi ketika kamu mengubahnya.",
+    group_master: "Kontrol Utama", group_htf: "HTF Delivery", group_erl: "External Range Liquidity (ERL)", group_irl: "Internal Range Liquidity (IRL)", group_session: "Filter Sesi", group_signal: "Model Entry", group_risk: "Manajemen Risiko",
+    on: "Aktif", off: "Nonaktif",
+    setting_visual_desc: "Saklar visual utama untuk seluruh skrip. Semua pemrosesan data, sinyal, dan alert tetap berjalan di latar belakang terlepas dari pengaturan ini — hanya rendering yang terpengaruh.",
+    visual_on: "Semua visual dirender di grafik. Garis sweep, kotak, zona FVG, garis MSS, zona HTF, dan kotak sesi semuanya digambar.",
+    visual_off: "Grafik bersih. Tidak ada objek gambar yang dibuat. Sinyal dan alert tetap aktif. Berguna untuk trading langsung dengan alert saja.",
+    setting_backtest_desc: "Mengontrol apakah order strategi dikirim ke simulator broker TradingView. Ketika nonaktif, skrip berperilaku sebagai indikator murni.",
+    backtest_on: "Entry, exit, stop loss, dan take profit strategi dieksekusi di simulator. Metrik performa muncul di tab Strategy Tester.",
+    backtest_off: "Tidak ada order yang dikirim. Skrip berjalan sebagai indikator saja. Gunakan ini saat menerapkan ke grafik langsung tanpa mengganggu koneksi broker.",
+    setting_htf_show_desc: "Mengaktifkan pelacakan zona FVG dan iFVG timeframe lebih tinggi. Ditampilkan di grafik saat ini sebagai kotak berwarna dan digunakan sebagai filter bias arah untuk event ERL dan IRL.",
+    htf_show_on: "Zona HTF terdeteksi, digambar, dan digunakan sebagai filter confluence untuk liquidity event tergantung pengaturan Mode.",
+    htf_show_off: "Tidak ada zona HTF yang dilacak atau ditampilkan. Semua filter HTF dilewati dan event dievaluasi tanpa confluence HTF.",
+    htf_scope_name: "Cakupan",
+    setting_htf_scope_desc: "Menentukan lapisan struktural mana yang diterapkan filter HTF.",
+    htf_scope_ext: "Filter HTF hanya mengevaluasi event ERL. Event IRL tidak difilter berdasarkan kehadiran zona HTF.",
+    htf_scope_int: "Filter HTF hanya mengevaluasi event IRL. Event ERL melewati pengecekan confluence HTF sepenuhnya.",
+    htf_scope_both: "Filter HTF berlaku di kedua lapisan ERL dan IRL secara bersamaan. Paling konservatif — direkomendasikan.",
+    htf_period_name: "Periode",
+    setting_htf_period_desc: "Timeframe dari mana FVG diambil. Biarkan kosong untuk menggunakan pemetaan auto berdasarkan timeframe grafik saat ini.",
+    auto_map: "Pemetaan otomatis (timeframe grafik ke HTF)",
+    setting_htf_mode_desc: "Mengontrol bagaimana confluence zona HTF dievaluasi untuk event ERL dan IRL.",
+    htf_mode_opt: "Zona HTF ditampilkan tetapi tidak digunakan dalam validasi sinyal. Semua event lolos terlepas dari overlap HTF.",
+    htf_mode_flt: "Event harus overlap dengan zona HTF aktif mana pun — arah zona tidak penting. Pengecekan kehadiran murni.",
+    htf_mode_req: "Event harus overlap dengan zona HTF yang sesuai arah. Bull sweep membutuhkan zona HTF bearish; sell sweep membutuhkan zona HTF bullish. Zona inversi yang sesuai arah sweep juga memenuhi syarat.",
+    setting_htf_aftersweep_desc: "Mengontrol kapan pengecekan overlap HTF dievaluasi. Kedua mode mencerminkan interpretasi valid dari model likuiditas — pilihannya menukar kecepatan dengan cakupan.",
+    htf_aftersweep_off: "Pengecekan HTF berjalan saat konfirmasi sweep menggunakan hanya rentang sweep. Jika tidak ada zona HTF saat itu, setup langsung ditolak. Menghasilkan lebih sedikit sinyal berkualitas lebih tinggi.",
+    htf_aftersweep_on: "Pengecekan HTF ditangguhkan hingga konfirmasi MSS atau kadaluarsa event. Rentang event penuh digunakan untuk pengecekan overlap, menangkap setup di mana harga berkembang ke zona HTF setelah sweep. Lebih banyak sinyal, sedikit lebih rendah presisinya.",
+    setting_atr_filter_desc: "Filter kualitas berbasis ukuran untuk zona HTF. Hanya zona dalam rentang ATR yang dikonfigurasi yang dilacak. Menyaring micro gap dan lonjakan berbasis berita ekstrem.",
+    atr_filter_on: "Hanya zona HTF dalam rentang multiplier ATR min/maks yang diterima. Gunakan pada instrumen volatil atau ketika ingin mengecualikan gap berkualitas rendah.",
+    atr_filter_off: "Semua zona HTF dilacak tanpa memandang ukurannya. Mungkin menyertakan gap sangat kecil atau lonjakan berita yang berlebihan.",
+    setting_ext_show_desc: "Mengalihkan rendering visual event ERL di grafik. Pemrosesan data, deteksi sweep, pemindaian FVG, dan pembuatan sinyal semua tetap berjalan di latar belakang meski ini nonaktif.",
+    ext_show_on: "Garis sweep, kotak grab, zona FVG, inversi iFVG, dan garis MSS untuk event ERL digambar di grafik.",
+    ext_show_off: "Grafik bersih dari gambar ERL. Semua logika ERL berjalan diam. Sinyal dan alert tetap aktif dari event ERL.",
+    setting_pool_desc: "Jumlah minimum sentuhan yang diperlukan sebelum level memenuhi syarat sebagai liquidity pool. Nilai lebih tinggi menghasilkan lebih sedikit tapi pool sweep yang secara struktural lebih kuat.",
+    pool_1: "Pivot tunggal mana pun langsung memenuhi syarat. Jumlah sinyal maksimum. Gunakan ketika ingin semua sweep struktural tanpa memandang kedalaman pool.",
+    pool_2: "Level harus diuji setidaknya dua kali. Menyaring fakeout satu sentuhan. Toleransi ATR menentukan apakah dua pivot dihitung sebagai level yang sama.",
+    pool_3: "Sangat selektif. Hanya level dengan beberapa sentuhan terkonfirmasi yang memenuhi syarat. Lebih sedikit sinyal, hanya sweep yang signifikan secara struktural.",
+    method_name: "Metode Deteksi",
+    setting_method_desc: "Mengontrol bagaimana level pivot diidentifikasi untuk target sweep.",
+    method_pivot: "Menggunakan pivot point terkonfirmasi dengan lookback simetris. Lebih akurat tetapi menimbulkan penundaan 2x panjang sebelum level muncul. Terbaik untuk analisis historis dan backtesting.",
+    method_range: "Ekstrem bergulir dalam N bar terakhir. Responsif dan mendekati real-time. Risiko repaint minor ketika level bergeser dalam jendela lookback. Terbaik untuk trading langsung.",
+    setting_mssrequired_desc: "Menentukan apa yang terjadi pada sweep event ketika tidak ada MSS yang terkonfirmasi dalam jendela delay.",
+    mssrequired_on: "Jika tidak ada MSS yang terkonfirmasi dalam jendela MSS Delay, sweep event sepenuhnya dihapus — visual dan sinyal keduanya dihilangkan. Grafik tetap bersih. Hanya setup pembalikan yang bertahan.",
+    mssrequired_off: "Sweep event bertahan di grafik bahkan tanpa konfirmasi MSS. Menampilkan semua liquidity raid termasuk pergerakan kelanjutan. Berguna untuk mempelajari pola sweep-and-go.",
+    setting_fvgmode_desc: "Mengontrol bagaimana fair value gap dalam jendela sweep diperlakukan — baik untuk tampilan maupun validasi sinyal.",
+    fvgmode_opt: "Semua FVG dalam jendela sweep ditampilkan. Tidak ada efek pada validasi sinyal — sweep event tidak difilter berdasarkan kehadiran FVG.",
+    fvgmode_flt: "Hanya FVG directional yang ditampilkan (bias berlawanan dengan sweep — bull sweep menampilkan FVG bearish). Validasi sinyal tidak berubah.",
+    fvgmode_req: "Hanya FVG directional yang ditampilkan, dan seluruh sweep event dikeluarkan jika tidak ada FVG directional yang terbentuk sebelum MSS delay berakhir.",
+    setting_ifvgmode_desc: "Mengontrol bagaimana FVG yang dibalik ditangani. iFVG terbentuk ketika FVG yang ada sepenuhnya ditembus, membalik bias arahnya.",
+    ifvgmode_opt: "Semua iFVG ditampilkan. Tidak ada filtering atau pengusiran event berdasarkan kehadiran iFVG.",
+    ifvgmode_flt: "Hanya iFVG directional yang ditampilkan. Bull sweep menampilkan iFVG bullish (FVG yang berbalik bullish). Bear sweep menampilkan iFVG bearish.",
+    ifvgmode_req: "Sweep event hanya dibuat jika kandidat FVG yang memenuhi syarat ada saat sweep. Event kemudian dikeluarkan jika tidak ada iFVG yang terkonfirmasi dalam jendela MSS delay.",
+    setting_crossmss_ext_desc: "Memungkinkan market structure shift IRL untuk mengkonfirmasi sweep event ERL. Pengaturan lanjutan untuk menangkap pembalikan awal di mana struktur internal pecah sebelum lapisan eksternal sepenuhnya terkonfirmasi.",
+    crossmss_ext_on: "Sweep event ERL bisa dikonfirmasi oleh MSS IRL. Konfirmasi lebih awal, lebih sensitif terhadap pemutusan struktur minor. Gunakan dengan backtesting yang teliti.",
+    crossmss_ext_off: "Event ERL membutuhkan MSS lapisan sendiri untuk konfirmasi. Lebih ketat — setiap lapisan mengkonfirmasi dirinya sendiri secara independen. Default dan direkomendasikan.",
+    setting_fvg_aftersweep_desc: "Mengontrol awal jendela deteksi FVG untuk setiap sweep event.",
+    fvg_aftersweep_on: "Jendela deteksi dimulai saat bar konfirmasi sweep. Hanya FVG yang terbentuk setelah sweep yang dihitung untuk filter dan validasi.",
+    fvg_aftersweep_off: "Jendela deteksi dimulai dari bar level pivot. FVG yang terbentuk sebelum sweep juga dihitung — cakupan lebih luas, lebih banyak kandidat FVG.",
+    irl_note: "Pengaturan IRL secara struktural identik dengan pengaturan ERL. Perbedaan utamanya adalah IRL menggunakan panjang lookback default yang lebih pendek untuk menargetkan struktur intraday minor. Semua opsi yang sama berlaku — Pool, Metode Deteksi, MSS Required, FVG Mode, iFVG Mode, After Sweep, dan Accept External MSS.",
+    setting_crossmss_int_desc: "Memungkinkan market structure shift ERL untuk mengkonfirmasi sweep event IRL. Berguna saat trading level likuiditas minor tetapi menginginkan confluence struktur utama sebagai konfirmasi tambahan.",
+    crossmss_int_on: "Event IRL bisa dikonfirmasi oleh MSS ERL. Menambahkan konfirmasi struktur utama ke entry level minor. Gunakan ketika menginginkan keselarasan struktural yang lebih kuat.",
+    crossmss_int_off: "Event IRL hanya dikonfirmasi melalui struktur lapisannya sendiri. Konfirmasi lebih cepat dan lebih sering. Perilaku default.",
+    session_filter_name: "Filter Sesi (per sesi)",
+    setting_session_filter_desc: "Setiap sesi (Asia, London, New York, dan tiga slot kustom) memiliki toggle filter independen. Ketika diaktifkan untuk sebuah sesi, sweep event hanya diterima saat sesi tersebut aktif. Beberapa sesi bisa diaktifkan secara bersamaan — jika sesi mana pun yang diaktifkan sedang aktif, filter lolos.",
+    session_filter_on: "Sweep event dari lapisan ini hanya dihasilkan selama jendela sesi. Event yang terjadi di luar sesi ditolak.",
+    session_filter_off: "Sesi ditampilkan (jika visual Sesi aktif) tetapi tidak memfilter sinyal. Event bisa terbentuk kapan saja.",
+    setting_session_aftersweep_desc: "Mode timing untuk validasi filter sesi. Mencerminkan perilaku opsi HTF After Sweep tetapi diterapkan pada batas sesi.",
+    session_aftersweep_off: "Sesi harus aktif pada bar tepat ketika sweep terkonfirmasi. Menolak setup yang terjadi dekat batas buka atau tutup sesi.",
+    session_aftersweep_on: "Pengecekan sesi ditangguhkan ke konfirmasi MSS atau kadaluarsa event. Menangkap setup di mana sweep terjadi dekat batas sesi tetapi MSS terbentuk di dalam sesi.",
+    setting_trading_desc: "Saklar utama untuk pembuatan sinyal. Menonaktifkan ini menekan semua label entry, pelacakan limit, dan order strategi.",
+    trading_on: "Sinyal entry dibuat berdasarkan model yang dipilih. Label Long/Short muncul di grafik. Order strategi dikirim jika Backtest juga aktif.",
+    trading_off: "Tidak ada sinyal yang dihasilkan. Gunakan ketika menginginkan visual analisis struktural tanpa pelacakan entry apa pun.",
+    signal_scope_name: "Cakupan Sinyal",
+    setting_signal_scope_desc: "Lapisan struktural mana yang menghasilkan sinyal entry. Model HTF FVG dan HTF iFVG melewati cakupan ini — mereka selalu beroperasi dari lapisan HTF terlepas dari pengaturan ini.",
+    scope_ext: "Hanya event ERL yang menghasilkan sinyal. Terbaik saat fokus pada sweep struktural utama.",
+    scope_int: "Hanya event IRL yang menghasilkan sinyal. Terbaik untuk setup intraday dengan pembuatan sinyal yang sering.",
+    scope_both: "Baik event ERL maupun IRL menghasilkan sinyal. Cakupan sinyal maksimum di semua lapisan struktural.",
+    setting_fvglimit_desc: "Membatasi jumlah entry limit yang dipicu per sweep event dari zona FVG dan iFVG. Tidak mempengaruhi model Sweep, MSS, HTF FVG, atau HTF iFVG.",
+    fvglimit_on: "Hanya N zona per event yang diaktifkan untuk limit order, dikontrol oleh nilai Max. Dikombinasikan dengan toggle Oldest untuk menentukan zona mana yang diprioritaskan.",
+    fvglimit_off: "Semua zona FVG dan iFVG yang memenuhi syarat dalam jendela sweep diaktifkan untuk entry limit. Lebih banyak entry per event, eksposur posisi lebih tinggi.",
+    setting_oldest_desc: "Urutan prioritas ketika beberapa zona yang memenuhi syarat ada dan Limit i/FVG aktif.",
+    oldest_on: "N zona tertua diaktifkan terlebih dahulu. Ini adalah zona yang paling jauh dari MSS — lebih jauh ke dalam premium atau diskon. Lebih banyak ruang bagi harga untuk mencapai.",
+    oldest_off: "N zona terbaru diaktifkan terlebih dahulu. Ini yang paling dekat dengan MSS — entry retrace terpendek. Probabilitas pengisian lebih tinggi tetapi zona lebih sempit.",
+    setting_historical_desc: "Mengontrol apakah label entry dan data dipertahankan setelah sweep event asal melewati batas pelacakan.",
+    historical_on: "Entry lama tetap terlihat di grafik bahkan setelah sweep event mereka dikeluarkan. Berguna untuk tinjauan backtesting dan membangun statistik performa.",
+    historical_off: "Label entry dihapus ketika event asal melewati batas. Grafik lebih bersih saat trading langsung — hanya sinyal terbaru yang terlihat.",
+    sl_method_name: "Metode SL",
+    setting_sl_method_desc: "Menentukan bagaimana harga stop loss dihitung untuk setiap entry. ATR buffer bisa ditambahkan di atas semua metode struktural.",
+    sl_col_method: "Metode", sl_col_ref: "Titik Referensi", sl_col_note: "Tradeoff",
+    sl_pct: "Persentase", sl_pct_ref: "% tetap dari entry", sl_pct_note: "Mengabaikan struktur. Jarak konsisten.",
+    sl_auto_ref: "Berbasis struktur, bergantung model", sl_auto_note: "Beradaptasi dengan jenis sinyal. Cakupan terluas.",
+    sl_level: "Sweep Level", sl_level_ref: "Di luar level likuiditas yang disapu", sl_level_note: "Paling ketat. Risiko stop-out lebih tinggi.",
+    sl_peak: "Sweep Peak/Trough", sl_peak_ref: "Di luar ekstrem wick sweep", sl_peak_note: "Standar. Opsi struktural paling aman.",
+    sl_range: "Event Range Extreme", sl_range_ref: "Di luar rentang event penuh", sl_range_note: "Paling lebar. R:R per trade jauh lebih rendah.",
+    sl_zone: "Zone", sl_zone_ref: "Di luar batas zona FVG / iFVG / HTF", sl_zone_note: "Sejajar zona. Fallback ke Auto jika tidak ada zona.",
+    setting_atrbuffer_desc: "Menambahkan margin keamanan berbasis ATR di luar titik referensi SL struktural. Tidak berpengaruh pada metode Persentase.",
+    atrbuffer_on: "Stop loss ditempatkan di: referensi struktural + (ATR x multiplier). Menambahkan ruang napas pada instrumen volatil di mana wick sering melewati struktur sebelum berbalik.",
+    atrbuffer_off: "Stop loss tepat di titik referensi struktural. Stop lebih ketat, R:R lebih tinggi, tetapi lebih rentan terhadap stop hunt wick pada pair yang berisik.",
+    setting_compound_desc: "Menentukan basis modal yang digunakan untuk menghitung ukuran posisi per trade.",
+    compound_on: "Risiko dihitung sebagai persentase dari ekuitas saat ini. Ukuran posisi tumbuh seiring akun — menggabungkan keuntungan dan kerugian. Kurva pertumbuhan agresif.",
+    compound_off: "Risiko dihitung sebagai persentase dari modal awal. Ukuran posisi tetap terlepas dari ekuitas saat ini. Risiko per trade yang stabil dan dapat diprediksi.",
+    glossary_title: "Glosarium",
+    gloss_liq: "Kluster order tertunda yang berada di atau dekat level harga kunci — biasanya terbentuk oleh equal highs atau lows, stop loss dari trader ritel, atau titik swing yang belum diuji.",
+    gloss_sweep: "Pergerakan yang sebentar menembus level kunci, memicu order yang ada di sana, kemudian berbalik. Pembalikan inilah yang mengkonfirmasi sweep sejati versus breakout sungguhan.",
+    gloss_fvg: "Fair Value Gap. Ketidakseimbangan tiga lilin di mana lilin tengah bergerak sangat kuat sehingga meninggalkan celah antara high pertama dan low ketiga. Harga cenderung kembali untuk mengisi celah ini.",
+    gloss_ifvg: "Inverse FVG. Fair value gap yang telah sepenuhnya ditembus. Begitu FVG bullish sepenuhnya ditembus ke arah bawah, ia menjadi iFVG bearish — rentang harga yang sama, arah pengiriman berlawanan.",
+    gloss_mss: "Market Structure Shift. Penembusan terkonfirmasi atas swing point sebelumnya ke arah berlawanan dengan sweep. Diperlukan untuk mengkonfirmasi bahwa pembalikan sedang berlangsung dan sweep tersebut nyata.",
+    gloss_ce_title: "Consequent Encroachment",
+    gloss_ce: "Titik tengah 50% dari zona FVG atau iFVG mana pun. Referensi standar untuk penempatan limit order — harga yang mencapai titik tengah dianggap cukup retrace ke dalam zona untuk entry probabilitas tinggi.",
+    footer_warning: "Ini bukan saran keuangan. Semua analisis hanya untuk tujuan edukasi. Trading atas risiko Anda sendiri.",
+  }
+};
+
+let currentLang = 'en';
+let currentTheme = localStorage.getItem('lc_theme') || 'light';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : '');
+  document.getElementById('theme-btn').textContent = theme === 'dark' ? 'Light' : 'Dark';
+}
+
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('lc_theme', currentTheme);
+  applyTheme(currentTheme);
+}
+
+function t(key) {
+  return (i18n[currentLang] && i18n[currentLang][key]) || (i18n['en'][key]) || key;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  document.documentElement.lang = currentLang;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  applyTranslations();
+  updateDynamicContent();
+}
+
+function updateDynamicContent() {
+  const authorBadge = document.getElementById('badge-author');
+  const editedBadge = document.getElementById('badge-edited');
+
+  authorBadge.textContent = CONFIG.author;
+
+  const editedLabel = currentLang === 'id' ? 'Terakhir diperbarui' : 'Last updated';
+  editedBadge.textContent = editedLabel + ': ' + CONFIG.lastEdited;
+
+  const footerEl = document.getElementById('footer-main');
+  const byLabel = currentLang === 'id' ? 'Dibuat oleh' : 'Authored by';
+  const editLabel = currentLang === 'id' ? 'Terakhir diperbarui' : 'Last updated';
+  footerEl.textContent = byLabel + ' ' + CONFIG.author + (CONFIG.version ? ' — v' + CONFIG.version : '') + ' · ' + editLabel + ': ' + CONFIG.lastEdited;
+
+  const navBrand = document.getElementById('nav-brand');
+  navBrand.innerHTML = 'Liquidity Concept <span>by ' + CONFIG.author + '</span>';
+}
+
+function toggleRow(row) {
+  const isOpen = row.classList.contains('open');
+  document.querySelectorAll('.setting-row.open').forEach(r => r.classList.remove('open'));
+  if (!isOpen) row.classList.add('open');
+}
+
+applyTheme(currentTheme);
+document.addEventListener('DOMContentLoaded', () => {
+  applyTranslations();
+  updateDynamicContent();
+});
+</script>
+</body>
+</html>
